@@ -1,0 +1,370 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Vehicle-Service API",
+        "description": "REST API untuk Service Data Kendaraan pada proses Penugasan Perjalanan Dinas (Dispatching).",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "Vehicle-Service local server"
+        }
+    ],
+    "paths": {
+        "/api/v1/vehicles": {
+            "get": {
+                "tags": [
+                    "Vehicles"
+                ],
+                "summary": "Mengambil daftar seluruh kendaraan beserta status ketersediaannya",
+                "operationId": "73b535724aa9e0eb6ab36f9dea2af5d9",
+                "responses": {
+                    "200": {
+                        "description": "Data kendaraan berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Vehicle"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "service_name": {
+                                                    "type": "string",
+                                                    "example": "Vehicle-Service"
+                                                },
+                                                "api_version": {
+                                                    "type": "string",
+                                                    "example": "v1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "API Key salah atau kosong",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "iaeApiKey": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Vehicles"
+                ],
+                "summary": "Menambahkan data kendaraan baru",
+                "operationId": "97d5b1544d8d0b1bbf78bacb7ff7c9d6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "vehicle_code",
+                                    "plate_number",
+                                    "brand",
+                                    "model",
+                                    "vehicle_type",
+                                    "capacity",
+                                    "fuel_type",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "vehicle_code": {
+                                        "type": "string",
+                                        "example": "VH-005"
+                                    },
+                                    "plate_number": {
+                                        "type": "string",
+                                        "example": "B 9001 NEW"
+                                    },
+                                    "brand": {
+                                        "type": "string",
+                                        "example": "Toyota"
+                                    },
+                                    "model": {
+                                        "type": "string",
+                                        "example": "Innova"
+                                    },
+                                    "vehicle_type": {
+                                        "type": "string",
+                                        "example": "MPV"
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": 7
+                                    },
+                                    "fuel_type": {
+                                        "type": "string",
+                                        "example": "Diesel"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "Available",
+                                        "enum": [
+                                            "Available",
+                                            "In-Use",
+                                            "Maintenance"
+                                        ]
+                                    },
+                                    "last_service_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-05-30",
+                                        "nullable": true
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Kendaraan baru untuk perjalanan dinas luar kota.",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Data kendaraan berhasil ditambahkan"
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "API Key salah atau kosong",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "iaeApiKey": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/vehicles/{id}": {
+            "get": {
+                "tags": [
+                    "Vehicles"
+                ],
+                "summary": "Mengambil detail spesifik satu kendaraan",
+                "operationId": "3f9cfe137c4a5c2f8d0cebf4df782777",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail kendaraan berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data retrieved successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Vehicle"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "service_name": {
+                                                    "type": "string",
+                                                    "example": "Vehicle-Service"
+                                                },
+                                                "api_version": {
+                                                    "type": "string",
+                                                    "example": "v1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "API Key salah atau kosong",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "iaeApiKey": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Vehicle": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "vehicle_code": {
+                        "type": "string",
+                        "example": "VH-001"
+                    },
+                    "plate_number": {
+                        "type": "string",
+                        "example": "B 1022 TIA"
+                    },
+                    "brand": {
+                        "type": "string",
+                        "example": "Toyota"
+                    },
+                    "model": {
+                        "type": "string",
+                        "example": "Avanza"
+                    },
+                    "vehicle_type": {
+                        "type": "string",
+                        "example": "MPV"
+                    },
+                    "capacity": {
+                        "type": "integer",
+                        "example": 7
+                    },
+                    "fuel_type": {
+                        "type": "string",
+                        "example": "Gasoline"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "Available",
+                        "enum": [
+                            "Available",
+                            "In-Use",
+                            "Maintenance"
+                        ]
+                    },
+                    "last_service_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-05-10",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Siap digunakan untuk perjalanan dinas.",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorResponse": {
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "example": "error"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Detail pesan kesalahan"
+                    },
+                    "errors": {
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "iaeApiKey": {
+                "type": "apiKey",
+                "description": "API Key untuk mengakses Vehicle-Service. Gunakan value 102022400230.",
+                "name": "X-IAE-KEY",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Vehicles",
+            "description": "Vehicles"
+        }
+    ]
+}

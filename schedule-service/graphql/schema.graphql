@@ -1,0 +1,17 @@
+type Schedule {
+    id: ID!
+    vehicle_id: Int!
+    driver_id: Int!
+    destination: String!
+    departure_date: String!
+    return_date: String!
+    purpose: String!
+    status: String!
+    created_at: String
+    updated_at: String
+}
+
+type Query {
+    schedules: [Schedule!]! @all
+    schedule(id: ID! @eq): Schedule @find
+}

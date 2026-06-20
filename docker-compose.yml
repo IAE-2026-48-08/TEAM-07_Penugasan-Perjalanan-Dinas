@@ -1,0 +1,70 @@
+services:
+  api-gateway:
+    image: nginx:1.27-alpine
+    container_name: dispatching-api-gateway
+    depends_on:
+      - vehicle-service
+      - schedule-service
+      - maintenance-service
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./web:/usr/share/nginx/html:ro
+
+  vehicle-service:
+    build:
+      context: ./102022400230_Tiara-Vehicle-Service/102022400230_Tiara-Vehicle-Service
+    container_name: dispatching-vehicle-service
+    environment:
+      APP_NAME: Vehicle-Service
+      APP_ENV: local
+      APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8080
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /var/www/html/database/database.sqlite
+      X_IAE_KEY_VALUE: "102022400230"
+      LIGHTHOUSE_SCHEMA_CACHE_ENABLE: "false"
+
+  schedule-service:
+    build:
+      context: ./schedule-service
+    container_name: dispatching-schedule-service
+    environment:
+      APP_NAME: Schedule-Service
+      APP_ENV: local
+      APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8080
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /app/database/database.sqlite
+      SCHEDULE_API_KEY: "102022400033"
+      VEHICLE_SERVICE_URL: http://vehicle-service:8000
+      VEHICLE_SERVICE_KEY: "102022400230"
+      MAINTENANCE_SERVICE_URL: http://maintenance-service:8000
+      MAINTENANCE_SERVICE_KEY: "102022400256"
+
+  maintenance-service:
+    build:
+      context: ./102022400256_Monitoring-BBM-Servis-Service/102022400256_MONITORING-BBM-SERVIS-SERVICE
+    container_name: dispatching-maintenance-service
+    environment:
+      APP_NAME: Monitoring-BBM-Servis-Service
+      APP_ENV: local
+      APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8080
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /app/database/database.sqlite
+      IAE_API_KEY: "102022400256"
+      IAE_CLOUD_URL: https://iae-sso.virtualfri.id
+      IAE_TOKEN_PATH: /api/v1/auth/token
+      IAE_SOAP_AUDIT_PATH: /soap/v1/audit
+      IAE_RABBITMQ_PUBLISH_PATH: /api/v1/messages/publish
+      IAE_CLOUD_API_KEY: ${IAE_CLOUD_API_KEY:-}
+      IAE_M2M_TOKEN: ${IAE_M2M_TOKEN:-}
+      IAE_CLIENT_ID: ${IAE_CLIENT_ID:-}
+      IAE_CLIENT_SECRET: ${IAE_CLIENT_SECRET:-}
+      IAE_TEAM_ID: ${IAE_TEAM_ID:-TEAM-07}
+      IAE_EXCHANGE: ${IAE_EXCHANGE:-iae.central.exchange}

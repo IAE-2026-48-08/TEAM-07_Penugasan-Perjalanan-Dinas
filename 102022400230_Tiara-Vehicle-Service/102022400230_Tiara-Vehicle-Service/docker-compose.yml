@@ -1,0 +1,15 @@
+services:
+  vehicle-service:
+    build: .
+    container_name: tiara-vehicle-service
+    ports:
+      - "8000:8000"
+    environment:
+      APP_NAME: Vehicle-Service
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /var/www/html/database/database.sqlite
+      X_IAE_KEY_VALUE: "102022400230"
+      LIGHTHOUSE_SCHEMA_CACHE_ENABLE: "false"

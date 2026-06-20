@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dispatching Armada</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">D</span>
+        <div>
+          <strong>Dispatching</strong>
+          <small>Perjalanan Dinas</small>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#overview" class="nav-link active">Overview</a>
+        <a href="#dispatch-form" class="nav-link">Buat Jadwal</a>
+        <a href="#vehicles" class="nav-link">Kendaraan</a>
+        <a href="#schedules" class="nav-link">Jadwal Driver</a>
+        <a href="#maintenance" class="nav-link">Operasional</a>
+      </nav>
+      <div class="sidebar-profile">
+        <div class="profile-info">
+          <div class="profile-avatar">AD</div>
+          <div class="profile-text">
+            <strong>Admin Dinas</strong>
+            <span>admin@dinas.go.id</span>
+          </div>
+        </div>
+        <button class="btn secondary small profile-edit-btn">Edit Profil</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">API Gateway Terintegrasi</p>
+          <h1>Penugasan Perjalanan Dinas</h1>
+        </div>
+        <div class="top-actions dropdown">
+          <button class="status-pill ok dropdown-toggle" type="button" style="border: 1px solid #bbf7d0; cursor: pointer; gap: 6px; padding-right: 8px;">
+            <span id="sessionPill" data-testid="session-pill" style="color: inherit; font-weight: inherit; margin: 0; padding: 0;">Sesi aktif</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="dropdown-menu">
+            <button id="addVehicleBtn" class="dropdown-item" type="button" data-testid="add-vehicle-button">Tambah Kendaraan</button>
+            <button id="refreshBtn" class="dropdown-item" type="button" data-testid="refresh-button">Refresh</button>
+            <div class="dropdown-divider"></div>
+            <button id="headerLogoutBtn" class="dropdown-item text-danger" type="button" data-testid="header-logout-button">Logout</button>
+          </div>
+        </div>
+      </header>
+
+      <section id="overview" class="stats-grid page active" aria-label="Ringkasan dispatching">
+        <div class="stat">
+          <span>Available</span>
+          <strong id="availableCount">0</strong>
+        </div>
+        <div class="stat">
+          <span>In-Use</span>
+          <strong id="inUseCount">0</strong>
+        </div>
+        <div class="stat">
+          <span>Maintenance</span>
+          <strong id="maintenanceVehicleCount">0</strong>
+        </div>
+        <div class="stat">
+          <span>Schedules</span>
+          <strong id="scheduleCount">0</strong>
+        </div>
+      </section>
+
+      <section class="auth-panel panel" aria-label="SSO cloud pusat">
+        <div class="auth-header">
+          <div class="auth-logo">D</div>
+          <h2>Sistem Informasi Dispatching Armada</h2>
+          <p>Pemerintah Daerah - Dinas Perhubungan</p>
+        </div>
+        <form id="ssoForm" class="auth-form" autocomplete="off" data-testid="sso-form">
+          <label>Email Instansi
+            <input id="ssoEmail" name="email" type="email" autocomplete="username" required data-testid="sso-email" value="admin@dinas.go.id">
+          </label>
+          <label>Kata Sandi
+            <input id="ssoPassword" name="password" type="password" autocomplete="current-password" required data-testid="sso-password" value="password">
+          </label>
+          <div class="auth-actions">
+            <button id="ssoLoginBtn" class="btn primary" type="submit" data-testid="sso-login-button" style="width: 100%;">Masuk ke Sistem</button>
+          </div>
+        </form>
+        <div class="auth-footer">
+          <p>&copy; 2026 Dinas Perhubungan. Hak Cipta Dilindungi.</p>
+        </div>
+      </section>
+
+      <section id="dispatch-form" class="workspace page">
+        <form id="dispatchForm" class="panel form-panel" autocomplete="off" data-testid="dispatch-form">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Surat Tugas Digital</p>
+              <h2>Buat Dispatch</h2>
+            </div>
+            <span id="formStatus" class="status-pill muted" data-testid="form-status">Siap</span>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              Kendaraan
+              <select id="vehicleId" name="vehicle_id" required data-testid="vehicle-select"></select>
+            </label>
+            <label>
+              ID Driver
+              <input name="driver_id" type="number" min="1" value="77" required>
+            </label>
+            <label>
+              Tujuan
+              <input name="destination" type="text" value="Bandung" required>
+            </label>
+            <label>
+              Plafon BBM
+              <input name="fuel_limit" type="number" min="0" value="500000" required>
+            </label>
+            <label>
+              Berangkat
+              <input name="departure_date" type="date" required>
+            </label>
+            <label>
+              Kembali
+              <input name="return_date" type="date" required>
+            </label>
+            <label>
+              Kupon Operasional
+              <input name="operational_coupon" type="text" value="OPS-20260621-001">
+            </label>
+            <label class="wide">
+              Keperluan
+              <input name="purpose" type="text" value="Rapat koordinasi" required>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button id="submitBtn" class="btn primary" type="submit" data-testid="create-dispatch-button">Buat Jadwal</button>
+            <button id="resetBtn" class="btn secondary" type="button" data-testid="reset-button">Reset Form</button>
+          </div>
+        </form>
+
+        <section class="panel result-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Hasil Transaksi</p>
+              <h2>Dispatch Terakhir</h2>
+            </div>
+          </div>
+          <pre id="resultBox" class="result-box" data-testid="result-box">Belum ada transaksi.</pre>
+        </section>
+      </section>
+
+      <section id="vehicles" class="data-grid page">
+        <div class="panel wide-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Service Data Kendaraan</p>
+              <h2>Kendaraan</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Plat</th>
+                  <th>Model</th>
+                  <th>Status</th>
+                  <th>Ubah Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="vehicleRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="schedules" class="data-grid page">
+        <div class="panel wide-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Service Penjadwalan Driver</p>
+              <h2>Schedules</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Kendaraan</th>
+                  <th>Driver</th>
+                  <th>Tujuan</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="scheduleRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="maintenance" class="data-grid page">
+        <div class="panel wide-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Service Monitoring BBM/Servis</p>
+              <h2>Alokasi Operasional</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Schedule</th>
+                  <th>Kendaraan</th>
+                  <th>Plafon BBM</th>
+                  <th>Servis Terakhir</th>
+                  <th>Kupon</th>
+                </tr>
+              </thead>
+              <tbody id="maintenanceRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="vehicleDialog" class="modal" data-testid="vehicle-dialog">
+    <form id="vehicleEditForm" class="modal-card" autocomplete="off">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Edit Data Kendaraan</p>
+          <h2 id="vehicleDialogTitle">Kendaraan</h2>
+        </div>
+        <button id="cancelVehicleEditBtn" class="icon-btn" type="button" aria-label="Tutup">X</button>
+      </div>
+
+      <input name="id" type="hidden">
+
+      <div class="form-grid">
+        <label>
+          Kode Kendaraan
+          <input name="vehicle_code" type="text" required>
+        </label>
+        <label>
+          Plat Nomor
+          <input name="plate_number" type="text" required>
+        </label>
+        <label>
+          Brand
+          <input name="brand" type="text" required>
+        </label>
+        <label>
+          Model
+          <input name="model" type="text" required>
+        </label>
+        <label>
+          Tipe
+          <input name="vehicle_type" type="text" required>
+        </label>
+        <label>
+          Kapasitas
+          <input name="capacity" type="number" min="1" required>
+        </label>
+        <label>
+          BBM
+          <input name="fuel_type" type="text" required>
+        </label>
+        <label>
+          Status
+          <select name="status" required>
+            <option value="Available">Available</option>
+            <option value="In-Use">In-Use</option>
+            <option value="Maintenance">Maintenance</option>
+          </select>
+        </label>
+        <label>
+          Servis Terakhir
+          <input name="last_service_date" type="date">
+        </label>
+        <label class="wide">
+          Catatan
+          <textarea name="notes" rows="3"></textarea>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button id="saveVehicleBtn" class="btn primary" type="submit" data-testid="save-vehicle-button">Simpan Kendaraan</button>
+        <button class="btn secondary" type="button" data-action="close-vehicle-dialog">Batal</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="profileDialog" class="modal">
+    <div class="modal-card" style="max-width: 400px; margin: auto;">
+      <div class="panel-head">
+        <h2>Edit Profil Pengguna</h2>
+      </div>
+      <form id="profileForm" style="margin-top: 20px;">
+        <div class="form-grid" style="grid-template-columns: 1fr;">
+          <label class="wide">Nama Tampilan Profil
+            <input type="text" name="profileName" id="profileNameInput" value="Admin Dinas" required>
+          </label>
+        </div>
+        <div class="form-actions" style="justify-content: flex-end; margin-top: 24px;">
+          <button type="button" class="btn secondary" onclick="document.getElementById('profileDialog').close()">Batal</button>
+          <button type="submit" class="btn primary">Simpan Profil</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="./app.js"></script>
+</body>
+</html>

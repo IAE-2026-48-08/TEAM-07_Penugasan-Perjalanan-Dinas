@@ -1,0 +1,153 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Schedule Service API",
+        "description": "REST API untuk Service Penjadwalan Driver. Seluruh endpoint diamankan menggunakan API Key melalui header X-IAE-KEY.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000",
+            "description": "Local Development Server"
+        }
+    ],
+    "paths": {
+        "/api/v1/schedules": {
+            "get": {
+                "tags": [
+                    "Schedule Service"
+                ],
+                "summary": "Melihat daftar seluruh penugasan perjalanan dinas",
+                "operationId": "3e045100bc35429ec1e9e500c872210a",
+                "responses": {
+                    "200": {
+                        "description": "Schedules retrieved successfully"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Schedule Service"
+                ],
+                "summary": "Membuat penugasan perjalanan dinas baru",
+                "operationId": "80d228d6d67d87d4175dc5f0ab7ad187",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "vehicle_id",
+                                    "driver_id",
+                                    "destination",
+                                    "departure_date",
+                                    "return_date",
+                                    "purpose"
+                                ],
+                                "properties": {
+                                    "vehicle_id": {
+                                        "type": "integer",
+                                        "example": 101
+                                    },
+                                    "driver_id": {
+                                        "type": "integer",
+                                        "example": 201
+                                    },
+                                    "destination": {
+                                        "type": "string",
+                                        "example": "Bandung"
+                                    },
+                                    "departure_date": {
+                                        "type": "string",
+                                        "example": "2026-06-15"
+                                    },
+                                    "return_date": {
+                                        "type": "string",
+                                        "example": "2026-06-17"
+                                    },
+                                    "purpose": {
+                                        "type": "string",
+                                        "example": "Kunjungan Dinas"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Schedule created successfully"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/schedules/{id}": {
+            "get": {
+                "tags": [
+                    "Schedule Service"
+                ],
+                "summary": "Melihat detail penugasan perjalanan dinas berdasarkan ID",
+                "operationId": "0d8968287f69d41388ce469f21e95825",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Schedule not found"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "description": "API Key menggunakan NIM mahasiswa",
+                "name": "X-IAE-KEY",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Schedule Service",
+            "description": "Schedule Service"
+        }
+    ]
+}
